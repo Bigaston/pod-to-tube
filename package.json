@@ -1,0 +1,23 @@
+{
+  "name": "pod-to-tube",
+  "version": "0.1.0",
+  "description": "Upload your podcast episode directly to Youtube",
+  "main": "pod.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bigaston/pod-to-tube.git"
+  },
+  "author": "Bigaston",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Bigaston/pod-to-tube/issues"
+  },
+  "homepage": "https://github.com/Bigaston/pod-to-tube#readme",
+  "dependencies": {
+    "expressjs": "^1.0.1",
+    "jimp": "^0.6.1"
+  }
+}
