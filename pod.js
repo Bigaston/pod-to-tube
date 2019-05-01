@@ -2,6 +2,12 @@ var Jimp = require('jimp');
 const config = require("./config.json")
 var express = require('express');
 var Parser = require('rss-parser');
+const fetch = require('node-fetch');
+var download = require('download-file')
+var ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+var ffmpeg = require('fluent-ffmpeg');
+ffmpeg.setFfmpegPath(ffmpegPath);
+var command = ffmpeg();
 
 var app = express();
 
@@ -10,16 +16,15 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 app.post("/start", function(req, res) {
-
 	let parser = new Parser();
 	parser.parseURL(req.body.rss, function(err, feed) {
 			console.log("Flux récupéré")
 			console.log("Image en cours de création")
-			createImage(feed.items[0], feed.title);
+			createImage(feed.items[req.body.ep], feed.title);
+			res.send("Flux envoyé au serveur. Episode : " + feed.items[req.body.ep].title)
+
 		}
 	)
-
-	res.send("Flux envoyé au serveur")
 })
 
 app.get("/", function(req, res) {
@@ -93,6 +98,7 @@ function createImage(episode, title) {
 	
 					back.write("./export/background.png");
 					console.log("> Image sauvegardée")
+					dlAudio(episode, title)
 				})
 	
 			})
@@ -100,4 +106,47 @@ function createImage(episode, title) {
 	});	
 }
 
-app.listen(config.port)
+function dlAudio(episode, title) {
+	console.log("Génération de la vidéo")
+	console.log("> Démarage du téléchargement de l'audio")
+	fetch(episode.enclosure.url).then(response => {
+		download(response.url, {directory: "./export/",filename: "audio.mp3"}, function(err){
+			if (err) throw err
+			console.log("> Fin du téléchargement de l'audio")
+			createVideo(episode, title);
+		})
+	})
+}
+
+var timemark = null;
+
+function createVideo(episode, title) {
+	console.log("Création de la vidéo")
+	command
+		.on('end', onEnd )
+		.on('progress', onProgress)
+		.on('error', onError)
+		.input("./export/background.png")
+		.loop(1)
+		.input('./export/audio.mp3')
+		.output('./export/video.mp4')
+		.outputFPS(30)
+		.run();
+}
+
+function onProgress(progress){
+	if (progress.timemark != timemark) {
+		timemark = progress.timemark;
+		console.log('Time mark: ' + timemark + "...");
+	}
+}
+   
+function onError(err, stdout, stderr) {
+	console.log('Cannot process video: ' + err.message);
+}
+   
+function onEnd() {
+	console.log('Finished processing');
+}
+
+app.listen(config.port);

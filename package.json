@@ -17,9 +17,13 @@
   },
   "homepage": "https://github.com/Bigaston/pod-to-tube#readme",
   "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.0.17",
     "body-parser": "^1.18.3",
+    "download-file": "^0.1.5",
     "express": "^4.16.4",
+    "fluent-ffmpeg": "^2.1.2",
     "jimp": "^0.6.1",
+    "node-fetch": "^2.3.0",
     "rss-parser": "^3.7.0"
   }
 }
