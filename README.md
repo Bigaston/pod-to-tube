@@ -9,7 +9,7 @@ PodToTube est (encore) un service pour LastPod.pm! Avec celui-ci, vous pourrez d
 ## Installation et utilisation
 - Copiez le contenu de ce repo (ou récuperez le [ici](https://github.com/Bigaston/pod-to-tube/releases))
 - Ouvrez un terminal de commande dans le dossier téléchargé et executez `npm install`
-- Lancez ensuite le programme avec `node lastpod.js`
+- Lancez ensuite le programme avec `node pod.js`
 - Pour finir, rendez vous sur [localhost:44444](http://localhost:44444) pour ajouter votre flux
 - La terminal de commande vous donne des informations sur l'avancée de la création. Quand "Vidéo générée!" est affiché, vous pouvez retrouver votre vidéo dans "export"
 
