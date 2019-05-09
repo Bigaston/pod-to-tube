@@ -1,0 +1,2 @@
+del "%cd%\export\video.mp4"
+ffmpeg -loop 1 -framerate 2 -i ./export/background.png -i ./export/audio.mp3 -c:v libx264 -preset medium -tune stillimage -crf 18 -c:a copy -shortest -pix_fmt yuv420p ./export/video.mp4

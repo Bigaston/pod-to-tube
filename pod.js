@@ -4,10 +4,7 @@ var express = require('express');
 var Parser = require('rss-parser');
 const fetch = require('node-fetch');
 var download = require('download-file')
-var ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
-var ffmpeg = require('fluent-ffmpeg');
-ffmpeg.setFfmpegPath(ffmpegPath);
-var command = ffmpeg();
+const { exec } = require('child_process');
 
 var app = express();
 
@@ -122,17 +119,15 @@ var timemark = null;
 
 function createVideo(episode, title) {
 	console.log("Création de la vidéo")
-	command
-		.on('end', onEnd )
-		.on('progress', onProgress)
-		.on('error', onError)
-		.input("./export/background.png")
-		.loop(1)
-		.input('./export/audio.mp3')
-		.output('./export/video.mp4')
-		.outputFPS(30)
-		.run();
-}
+	//ffmpeg -loop 1 -framerate 2 -i image/binouze.jpg -i son/binouze56.mp3 -c:v libx264 -preset medium -tune stillimage -crf 18 -c:a copy -shortest -pix_fmt yuv420p binouze56.mkv
+	exec('createVideo.bat', (err, stdout, stderr) => {
+		if (err) {
+		  console.error(err);
+		  return;
+		}
+		console.log("Vidéo générée!");
+	  });
+} 
 
 function onProgress(progress){
 	if (progress.timemark != timemark) {
