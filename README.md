@@ -22,6 +22,7 @@ PodToTube est (encore) un service pour LastPod.pm! Avec celui-ci, vous pourrez d
 - Détection automatique de nouveaux épisodes
 - Amélioration de l'interface Web avec selection automatique de l'épisode
 - Ajout d'informations sur la vidéo (description courte, liens vers la vidéo, chapitrage, barre de chargement, durée)
+- Executable simplifié avec Electron
 
 ## Retour
 Vous avez des retours à faire sur ce projet? N'hésitez pas à me contacter sur [Twitter](https://twitter.com/Bigaston) pour avoir de l'aide!
