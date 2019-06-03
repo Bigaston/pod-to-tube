@@ -4,9 +4,15 @@ var express = require('express');
 var Parser = require('rss-parser');
 const fetch = require('node-fetch');
 var download = require('download-file')
+const open = require('open');
+var jsmediatags = require("jsmediatags");
+var fs = require("fs");
+var os = require("os");
 const { exec } = require('child_process');
 
 var app = express();
+
+open("http://localhost:" + config.port);
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
@@ -50,11 +56,11 @@ function createImage(episode, title) {
 
 			Jimp.loadFont("./assets/title.fnt", (err, font) => {
 				if (err) console.log(err);
-				if (730 + Jimp.measureText(font, episode.title) > 1600) {
+				if (730 + Jimp.measureText(font, episode.title) > 1400) {
 					splited = episode.title.split(" ");
 					chaine = "";
 					for (i = 0; i < splited.length; i++) {
-						if (730 + Jimp.measureText(font, chaine) > 1600) {
+						if (730 + Jimp.measureText(font, chaine) > 1400) {
 							back.print(font, 730, 300 + text_line * 64, chaine);
 							text_line++;
 							chaine = "";
@@ -126,8 +132,48 @@ function createVideo(episode, title) {
 		  return;
 		}
 		console.log("Vidéo générée!");
+		createDescription(episode, title);
 	  });
 } 
+
+function createDescription(episode, title) {
+	console.log("Démarage de la création de la description");
+	chaine_desc = "";
+	chaine_desc = chaine_desc + episode.content
+	chaine_desc = chaine_desc.replace(/<[^>]*>/g, "");
+	chaine_desc = chaine_desc.replace("\n", os.EOL)
+	jsmediatags.read("./export/audio.mp3", {
+		onSuccess: function(tag) {
+		  if (tag.tags.CHAP != undefined) {
+			  chaine_desc = chaine_desc + os.EOL + os.EOL + "🔖 Chapitres 🔖"
+			for (i = 0; i < tag.tags.CHAP.length; i++) {
+				sortie = convertHMS(tag.tags.CHAP[i].data.startTime)
+				chaine_desc = chaine_desc + `${os.EOL} ${sortie.minute}:${sortie.seconde} - ${tag.tags.CHAP[i].data.subFrames.TIT2.data}`
+			}
+
+			fs.writeFileSync("./export/description.txt", chaine_desc, {encoding: "utf8"})
+			console.log("Description prête dans le fichier description.txt")
+		  }
+		},
+		onError: function(error) {
+		  console.log(':(', error.type, error.info);
+		}
+	  });
+}
+
+function convertHMS(pSec) {
+    nbSec = Math.trunc(parseInt(pSec)/1000);
+	sortie = {};  
+
+    sortie.minute = Math.trunc(nbSec/60);
+    if (sortie.minute < 10) {sortie.minute = "0"+sortie.minute}
+ 
+    nbSec = nbSec%60;
+    sortie.seconde = Math.trunc(nbSec);
+    if (sortie.seconde < 10) {sortie.seconde = "0"+sortie.seconde}
+  
+    return sortie
+  }
 
 function onProgress(progress){
 	if (progress.timemark != timemark) {

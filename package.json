@@ -21,7 +21,9 @@
     "download-file": "^0.1.5",
     "express": "^4.16.4",
     "jimp": "^0.6.1",
+    "jsmediatags": "^3.8.1",
     "node-fetch": "^2.3.0",
+    "open": "^6.3.0",
     "rss-parser": "^3.7.0"
   }
 }
